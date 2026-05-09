@@ -1,0 +1,359 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ThreadView — A reader for Gmail</title>
+<meta name="description" content="A Chrome extension that opens any Gmail thread in a clean, distraction-free reading view. No data leaves your browser.">
+<meta property="og:title" content="ThreadView — A reader for Gmail">
+<meta property="og:description" content="A Chrome extension that opens any Gmail thread in a clean, distraction-free reading view.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://threadview.app">
+<link rel="icon" type="image/png" sizes="128x128" href="icon-128.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAFAF7;
+    --ink: #1B1D22;
+    --ink-soft: #3F4145;
+    --ink-muted: #6B6E75;
+    --rule: #E4E2DA;
+    --brand: #1A73E8;
+    --brand-deep: #0D5BC4;
+    --brand-tint: #EFF5FE;
+
+    --font-display: "Crimson Pro", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+    --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+    --col: clamp(20rem, 60vw, 44rem);
+    --t-h1: clamp(2.5rem, 5vw + 1rem, 5rem);
+    --t-lead: clamp(1.125rem, 0.6vw + 1rem, 1.375rem);
+    --t-body: clamp(1rem, 0.2vw + 0.95rem, 1.0625rem);
+    --t-small: 0.875rem;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  html { background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: var(--font-body);
+    font-size: var(--t-body);
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+
+  /* ---- Layout ---- */
+  .page {
+    max-width: var(--col);
+    margin: 0 auto;
+    padding: clamp(2.5rem, 4vw, 4rem) clamp(1.25rem, 3vw, 2rem) clamp(4rem, 8vw, 8rem);
+  }
+
+  /* ---- Header ---- */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: clamp(3rem, 8vw, 6rem);
+    font-size: var(--t-small);
+    color: var(--ink-muted);
+  }
+  .brand {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.005em;
+  }
+  .brand img { width: 72px; height: 72px; display: block; }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a { color: var(--ink-muted); text-decoration: none; }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ---- Hero ---- */
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--t-h1);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0 0 1.5rem;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--brand);
+    font-weight: 500;
+  }
+  .lead {
+    font-size: var(--t-lead);
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin: 0 0 2.5rem;
+    max-width: 36rem;
+  }
+  .cta-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    background: var(--brand);
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.875rem 1.5rem;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 1rem;
+    letter-spacing: -0.005em;
+    transition: background 150ms ease, transform 150ms ease;
+  }
+  .btn:hover { background: var(--brand-deep); transform: translateY(-1px); }
+  .btn .arrow { display: inline-block; transition: transform 200ms ease; }
+  .btn:hover .arrow { transform: translateX(2px); }
+  .btn--soft {
+    background: transparent;
+    color: var(--ink-soft);
+    padding: 0.875rem 1rem;
+  }
+  .btn--soft:hover { color: var(--ink); background: transparent; transform: none; }
+  .cta-note { font-size: var(--t-small); color: var(--ink-muted); }
+
+  /* ---- Screenshot frame ---- */
+  .shot {
+    margin: 0 0 clamp(3rem, 6vw, 5rem);
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(27, 29, 34, 0.04), 0 24px 60px -28px rgba(27, 29, 34, 0.18);
+  }
+  .shot img { width: 100%; height: auto; display: block; }
+
+  /* ---- Sections ---- */
+  .section {
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--rule);
+  }
+  .section h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.625rem, 1.5vw + 1rem, 2.25rem);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin: 0 0 1.5rem;
+  }
+  .section p { margin: 0 0 1rem; }
+
+  /* ---- Three-up feature grid ---- */
+  .features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem 2rem;
+    margin: 1.5rem 0 0;
+  }
+  @container (min-width: 36rem) { .features { grid-template-columns: 1fr 1fr 1fr; } }
+  .features { container-type: inline-size; }
+  .feat h3 {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0 0 0.375rem;
+    letter-spacing: -0.005em;
+  }
+  .feat p {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  .feat .marker {
+    width: 6px; height: 6px; border-radius: 999px;
+    background: var(--brand);
+    display: inline-block;
+    margin-right: 0.5rem;
+    transform: translateY(-2px);
+  }
+
+  /* ---- Privacy callout ---- */
+  .privacy-callout {
+    background: var(--brand-tint);
+    border: 1px solid color-mix(in srgb, var(--brand) 18%, transparent);
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+    margin: clamp(2rem, 4vw, 3rem) 0;
+  }
+  .privacy-callout h3 {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--brand-deep);
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.005em;
+  }
+  .privacy-callout p {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* ---- How-it-works ---- */
+  .how {
+    counter-reset: step;
+    padding-left: 0;
+    list-style: none;
+    margin: 1.5rem 0 0;
+  }
+  .how li {
+    counter-increment: step;
+    padding-left: 2.5rem;
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+  .how li::before {
+    content: counter(step);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 999px;
+    background: var(--brand-tint);
+    color: var(--brand-deep);
+    font-weight: 600;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-body);
+  }
+
+  /* ---- Footer ---- */
+  .foot {
+    margin-top: clamp(4rem, 8vw, 6rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-size: var(--t-small);
+    color: var(--ink-muted);
+    flex-wrap: wrap;
+  }
+  .foot a { color: var(--ink-muted); text-decoration: none; border-bottom: 1px solid transparent; transition: color 150ms ease, border-color 150ms ease; }
+  .foot a:hover { color: var(--ink); border-color: var(--ink); }
+
+  /* ---- Selection color ---- */
+  ::selection { background: var(--brand); color: #ffffff; }
+</style>
+</head>
+<body>
+  <main class="page">
+    <header class="nav">
+      <a href="index.html" class="brand">
+        <img src="icon-128.png" alt="">
+        <span>ThreadView</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#how">How it works</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <h1>A reader for Gmail. <em>Quiet, fast,&nbsp;yours.</em></h1>
+      <p class="lead">
+        ThreadView opens any Gmail conversation in a clean, distraction-free reading view —
+        no sidebar, no labels, no chat panel. Just the thread, formatted for reading.
+        Nothing leaves your browser.
+      </p>
+      <div class="cta-row">
+        <a class="btn" href="#" rel="noopener">
+          Install on Chrome Web Store
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn--soft" href="#how">How it works</a>
+      </div>
+      <p class="cta-note">Free. No account. Works on Gmail and Google Workspace inboxes.</p>
+    </section>
+
+    <figure class="shot" aria-label="ThreadView reading view of a Gmail thread">
+      <img src="screenshot-hero.png" alt="A Gmail thread rendered in ThreadView's clean reading view">
+    </figure>
+
+    <section class="section">
+      <h2>Reading, not triaging.</h2>
+      <p>
+        Email threads are conversations, but the Gmail UI is a control panel — search bar, label
+        sidebar, account switcher, chat dock, ads, summary previews. ThreadView keeps the thread
+        and removes the rest. Quoted history collapses by default, recipients fold into a single
+        line, inline images load, and the typography is tuned for long reading sessions.
+      </p>
+      <div class="features">
+        <div class="feat">
+          <h3><span class="marker"></span>Cleaned HTML</h3>
+          <p>Email senders' inline styles are sanitized so the thread reads in your typography, not theirs.</p>
+        </div>
+        <div class="feat">
+          <h3><span class="marker"></span>Smart quoting</h3>
+          <p>Replies show only what's new. Quoted history is collapsed unless that's all there is.</p>
+        </div>
+        <div class="feat">
+          <h3><span class="marker"></span>Width control</h3>
+          <p>Three reading widths — Medium, Wide, X&nbsp;Wide — to suit your monitor.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="privacy-callout">
+      <h3>Your mail does not leave your browser.</h3>
+      <p>
+        ThreadView reads Gmail's own server-rendered print-view HTML using your existing
+        browser session. There is no backend. No analytics. No telemetry. No remote logging.
+        See the <a href="privacy.html" style="color: var(--brand-deep); text-decoration: underline; text-underline-offset: 2px;">privacy policy</a> for the full list of what's read and where it goes.
+      </p>
+    </div>
+
+    <section id="how" class="section">
+      <h2>How it works.</h2>
+      <ol class="how">
+        <li>Open any Gmail conversation.</li>
+        <li>Click the <strong>ThreadView</strong> button at the bottom-right of the Gmail tab.</li>
+        <li>The thread opens in a new tab, formatted for reading.</li>
+      </ol>
+      <p style="margin-top: 1.5rem;">
+        Under the hood: ThreadView fetches Gmail's own print-view template
+        (<code style="font-family: var(--font-mono); font-size: 0.875em; background: rgba(26, 115, 232, 0.08); padding: 1px 6px; border-radius: 4px;">?view=pt</code>) using your existing
+        browser session, parses the resulting HTML in your tab, and renders it through a
+        sanitizing reader. No Gmail API, no OAuth, no Google verification — just the same
+        page Gmail's own Print button uses.
+      </p>
+    </section>
+
+    <footer class="foot">
+      <span>© 2026 ThreadView</span>
+      <span>
+        <a href="privacy.html">Privacy</a>
+        &nbsp;·&nbsp;
+        <a href="mailto:threadview@betterwayiq.com">threadview@betterwayiq.com</a>
+      </span>
+    </footer>
+  </main>
+</body>
+</html>

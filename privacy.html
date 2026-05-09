@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy — ThreadView</title>
+<meta name="description" content="ThreadView privacy policy. No data leaves your browser. No analytics, no telemetry, no remote logging.">
+<link rel="icon" type="image/png" sizes="128x128" href="icon-128.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #FAFAF7;
+    --ink: #1B1D22;
+    --ink-soft: #3F4145;
+    --ink-muted: #6B6E75;
+    --rule: #E4E2DA;
+    --brand: #1A73E8;
+    --brand-deep: #0D5BC4;
+    --brand-tint: #EFF5FE;
+    --font-display: "Crimson Pro", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+    --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Helvetica Neue", sans-serif;
+    --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    --col: clamp(20rem, 60vw, 44rem);
+    --t-h1: clamp(2rem, 3vw + 1rem, 3.25rem);
+    --t-h2: clamp(1.375rem, 1vw + 1rem, 1.75rem);
+    --t-body: clamp(1rem, 0.2vw + 0.95rem, 1.0625rem);
+    --t-small: 0.875rem;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  html { background: var(--paper); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  body {
+    font-family: var(--font-body);
+    font-size: var(--t-body);
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+  .page {
+    max-width: var(--col);
+    margin: 0 auto;
+    padding: clamp(2.5rem, 4vw, 4rem) clamp(1.25rem, 3vw, 2rem) clamp(4rem, 8vw, 8rem);
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+    font-size: var(--t-small);
+    color: var(--ink-muted);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.875rem;
+    text-decoration: none;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 1.375rem;
+    letter-spacing: -0.015em;
+  }
+  .brand img { width: 72px; height: 72px; display: block; }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a { color: var(--ink-muted); text-decoration: none; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links .current { color: var(--ink); }
+
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--t-h1);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0 0 0.5rem;
+  }
+  .updated {
+    font-size: var(--t-small);
+    color: var(--ink-muted);
+    margin: 0 0 clamp(2rem, 4vw, 3rem);
+  }
+
+  .lede {
+    font-size: 1.1875rem;
+    line-height: 1.55;
+    color: var(--ink);
+    margin: 0 0 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--t-h2);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin: 2.5rem 0 0.75rem;
+  }
+  h2:first-of-type { margin-top: 0; }
+
+  p { margin: 0 0 1rem; }
+  p:last-child { margin-bottom: 0; }
+
+  ul {
+    padding-left: 1.25rem;
+    margin: 0 0 1rem;
+  }
+  li { margin-bottom: 0.5rem; }
+  li::marker { color: var(--brand); }
+
+  a { color: var(--brand-deep); text-decoration: underline; text-underline-offset: 2px; }
+  a:hover { color: var(--brand); }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+    background: rgba(26, 115, 232, 0.08);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .pillbox {
+    background: var(--brand-tint);
+    border: 1px solid color-mix(in srgb, var(--brand) 18%, transparent);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+  }
+  .pillbox strong { color: var(--brand-deep); }
+
+  .foot {
+    margin-top: clamp(4rem, 8vw, 6rem);
+    padding-top: 2rem;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    font-size: var(--t-small);
+    color: var(--ink-muted);
+    flex-wrap: wrap;
+  }
+  .foot a { color: var(--ink-muted); text-decoration: none; border-bottom: 1px solid transparent; transition: color 150ms ease, border-color 150ms ease; }
+  .foot a:hover { color: var(--ink); border-color: var(--ink); }
+
+  ::selection { background: var(--brand); color: #ffffff; }
+</style>
+</head>
+<body>
+  <main class="page">
+    <header class="nav">
+      <a href="index.html" class="brand">
+        <img src="icon-128.png" alt="">
+        <span>ThreadView</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html#how">How it works</a>
+        <a href="privacy.html" class="current">Privacy</a>
+      </nav>
+    </header>
+
+    <h1>Privacy policy.</h1>
+    <p class="updated">Last updated 9 May 2026.</p>
+
+    <p class="lede">
+      ThreadView is a Chrome extension that runs entirely in your browser. There is no
+      backend server, no account, no telemetry, and no data shared with anyone.
+    </p>
+
+    <h2>What we collect</h2>
+    <p>
+      Nothing. ThreadView has no analytics, no telemetry, no error logging, no usage
+      tracking, and no remote services it talks to. There is no backend.
+    </p>
+
+    <h2>What ThreadView reads from your browser</h2>
+    <p>When you click the ThreadView button on a Gmail tab, the extension reads:</p>
+    <ul>
+      <li>The Gmail URL pathname, to determine which Google account index you are using.</li>
+      <li>A few DOM attributes from the open Gmail thread, to identify the thread you have open.</li>
+      <li>A list of recent network request URLs from the page's resource timing API, to find Gmail's per-session inbox key.</li>
+    </ul>
+    <p>
+      It then asks Gmail's own server for the print-view HTML of the open thread, using
+      your existing browser session cookies. The print-view HTML is the same one Gmail's
+      own Print button uses; ThreadView is reading what Gmail already serves.
+    </p>
+
+    <h2>Where data goes</h2>
+    <p>
+      Nowhere. The fetched HTML is parsed and rendered in a new tab on your machine.
+      It is not transmitted to ThreadView or any third party. The extension makes no
+      outbound network requests other than the authenticated fetch to <code>mail.google.com</code>
+      that retrieves the thread you asked to read, and (when applicable) similar
+      authenticated fetches to <code>mail.google.com</code> for inline image attachments
+      in that thread.
+    </p>
+
+    <div class="pillbox">
+      <strong>Plainly:</strong> if you turn off your network connection after Gmail loads,
+      you can still open ThreadView on a thread you've already viewed (the rendered HTML
+      stays in your tab). The extension itself does not phone home.
+    </div>
+
+    <h2>Permissions</h2>
+    <p>ThreadView requests the minimum permissions to function:</p>
+    <ul>
+      <li>
+        <strong>Host permission for <code>mail.google.com</code>.</strong> Required to
+        fetch Gmail's print-view HTML using your existing browser session. Without this
+        permission, no thread can be read. ThreadView does not request access to any
+        other domain.
+      </li>
+      <li>
+        <strong>Storage.</strong> Used only to remember your reading-width preference
+        (Medium, Wide, X&nbsp;Wide) across viewer tabs and a one-time installation
+        timestamp. Stored locally in your browser; never transmitted.
+      </li>
+    </ul>
+
+    <h2>Third parties</h2>
+    <p>
+      None. ThreadView does not integrate any analytics SDK, advertising network,
+      crash-reporting service, or third-party API. The extension's bundled code does
+      not load any external JavaScript at runtime.
+    </p>
+
+    <h2>Cookies</h2>
+    <p>
+      ThreadView does not set any cookies. The cookies your browser sends to Gmail
+      when fetching thread HTML are your existing Gmail session cookies — the same
+      ones you would send by visiting Gmail in a tab.
+    </p>
+
+    <h2>Children</h2>
+    <p>
+      ThreadView is a productivity utility for adult Gmail users. It is not directed
+      to children under 13.
+    </p>
+
+    <h2>Changes</h2>
+    <p>
+      If this policy changes, the new version will be posted at this page and the
+      "last updated" date above will reflect the change. Material changes — especially
+      anything that would result in data being transmitted — will also be noted in the
+      Chrome Web Store listing description.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Privacy questions: <a href="mailto:threadview@betterwayiq.com">threadview@betterwayiq.com</a>.
+    </p>
+
+    <footer class="foot">
+      <span>© 2026 ThreadView</span>
+      <span>
+        <a href="index.html">Home</a>
+        &nbsp;·&nbsp;
+        <a href="mailto:threadview@betterwayiq.com">threadview@betterwayiq.com</a>
+      </span>
+    </footer>
+  </main>
+</body>
+</html>
